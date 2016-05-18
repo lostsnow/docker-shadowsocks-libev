@@ -6,14 +6,25 @@ server:
   environment:
     - SERVER_PORT=8088
     - PASSWORD=ydzSpi4t1SE
+  restart: always
+
+client:
+  image: lostsnow/shadowsocks-libev
+  ports:
+    - "1080:1080"
+  environment:
+    - SERVER_ADDR=1.2.3.4
+    - SERVER_PORT=8088
+    - PASSWORD=ydzSpi4t1SE
   entrypoint: /bin/sh
   command: >
-    -c "/usr/local/bin/ss-server \
+    -c "/usr/local/bin/ss-local
       -s $${SERVER_ADDR} \
       -p $${SERVER_PORT} \
-      -k $${PASSWORD} \
       -m $${ENCRYPT_METHOD} \
+      -k $${PASSWORD} \
+      -b 0.0.0.0 \
+      -l 1080 \
       -t $${TIMEOUT} \
-      -d $${DNS_RESOLVER} \
-      --fast-open -u -A"
+      --fast-open -A
   restart: always

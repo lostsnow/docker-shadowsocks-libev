@@ -26,4 +26,11 @@ ENV DNS_RESOLVER 8.8.8.8
 EXPOSE ${SERVER_PORT}/tcp
 EXPOSE ${SERVER_PORT}/udp
 
-ENTRYPOINT ["/usr/local/bin/ss-server"]
+CMD /usr/local/bin/ss-server \
+    -s ${SERVER_ADDR} \
+    -p ${SERVER_PORT} \
+    -m ${ENCRYPT_METHOD} \
+    -k ${PASSWORD:-$(hostname)} \
+    -t ${TIMEOUT} \
+    -d ${DNS_RESOLVER} \
+    --fast-open -u -A
