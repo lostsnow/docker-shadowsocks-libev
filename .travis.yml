@@ -13,7 +13,7 @@ before_install:
 script:
   - curl -I -x socks5h://127.0.0.1:1080 https://www.google.com/
   - curl -I -x socks5h://127.0.0.1:1080 https://www.youtube.com/
-  - curl -I -x socks5h://127.0.0.1:1080 https://www.twitter.com/
+  - curl -I -x socks5h://127.0.0.1:1080 https://twitter.com/
   - curl -I -x socks5h://127.0.0.1:1080 https://www.facebook.com/
 
 after_success:
