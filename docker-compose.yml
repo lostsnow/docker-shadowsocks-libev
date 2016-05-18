@@ -1,0 +1,19 @@
+server:
+  image: lostsnow/shadowsocks-libev
+  ports:
+    - "8088:8088/tcp"
+    - "8088:8088/udp"
+  environment:
+    - SERVER_PORT=8088
+    - PASSWORD=ydzSpi4t1SE
+  entrypoint: /bin/sh
+  command: >
+    -c "/usr/local/bin/ss-server \
+      -s $${SERVER_ADDR} \
+      -p $${SERVER_PORT} \
+      -k $${PASSWORD} \
+      -m $${ENCRYPT_METHOD} \
+      -t $${TIMEOUT} \
+      -d $${DNS_RESOLVER} \
+      --fast-open -u -A"
+  restart: always
