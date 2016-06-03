@@ -1,7 +1,7 @@
 FROM alpine
 MAINTAINER lostsnow <lostsnow@gmail.com>
 
-ENV SS_VERSION 2.4.6
+ENV SS_VERSION 2.4.7
 ENV SS_DOWNLOAD_URL https://github.com/shadowsocks/shadowsocks-libev/archive/v${SS_VERSION}.tar.gz
 ENV SS_DEPEND autoconf build-base curl libtool linux-headers openssl-dev
 
