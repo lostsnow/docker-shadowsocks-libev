@@ -18,7 +18,7 @@ client:
     - PASSWORD=ydzSpi4t1SE
   entrypoint: /bin/sh
   command: >
-    -c "/usr/local/bin/ss-local
+    -c "/usr/local/bin/ss-local \
       -s $${SERVER_ADDR} \
       -p $${SERVER_PORT} \
       -m $${ENCRYPT_METHOD} \
