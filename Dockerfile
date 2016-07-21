@@ -22,6 +22,7 @@ ENV PASSWORD=
 ENV ENCRYPT_METHOD aes-256-cfb
 ENV TIMEOUT 300
 ENV DNS_RESOLVER 8.8.8.8
+ENV DNS_RESOLVER2 8.8.4.4
 
 EXPOSE ${SERVER_PORT}/tcp
 EXPOSE ${SERVER_PORT}/udp
@@ -33,4 +34,5 @@ CMD /usr/local/bin/ss-server \
     -k ${PASSWORD:-$(hostname)} \
     -t ${TIMEOUT} \
     -d ${DNS_RESOLVER} \
+    -d ${DNS_RESOLVER2} \
     --fast-open -u -A
