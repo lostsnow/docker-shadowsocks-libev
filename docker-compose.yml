@@ -26,5 +26,5 @@ client:
       -b 0.0.0.0 \
       -l 1080 \
       -t $${TIMEOUT} \
-      --fast-open -A
+      --fast-open -A"
   restart: always
