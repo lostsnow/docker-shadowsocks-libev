@@ -2,7 +2,7 @@
 
 [![](https://travis-ci.org/lostsnow/docker-shadowsocks-libev.svg)](https://travis-ci.org/lostsnow/docker-shadowsocks-libev)
 
-Current version: [2.4.8][1]
+Current version: [2.5.2][1]
 
 ## docker image
 
