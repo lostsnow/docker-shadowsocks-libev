@@ -3,17 +3,18 @@ MAINTAINER lostsnow <lostsnow@gmail.com>
 
 ENV SS_VERSION 2.5.2
 ENV SS_DOWNLOAD_URL https://github.com/shadowsocks/shadowsocks-libev/archive/v${SS_VERSION}.tar.gz
-ENV SS_DEPEND autoconf build-base curl libtool linux-headers openssl-dev asciidoc xmlto
+ENV SS_DEPEND pcre
+ENV SS_BUILD_DEPEND autoconf build-base curl libtool linux-headers openssl-dev asciidoc xmlto pcre-dev
 
 RUN set -ex \
-    && apk add --update ${SS_DEPEND} \
+    && apk add --update ${SS_DEPEND} ${SS_BUILD_DEPEND} \
     && curl -sSL ${SS_DOWNLOAD_URL} | tar xz \
     && cd shadowsocks-libev-${SS_VERSION} \
         && ./configure \
         && make install \
         && cd .. \
         && rm -rf shadowsocks-libev-${SS_VERSION} \
-    && apk del --purge ${SS_DEPEND} \
+    && apk del --purge ${SS_BUILD_DEPEND} \
     && rm -rf /var/cache/apk/*
 
 ENV SERVER_ADDR 0.0.0.0
