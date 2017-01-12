@@ -1,10 +1,44 @@
 FROM alpine
 MAINTAINER lostsnow <lostsnow@gmail.com>
 
-ENV SS_VERSION 2.5.2
-ENV SS_DOWNLOAD_URL https://github.com/shadowsocks/shadowsocks-libev/archive/v${SS_VERSION}.tar.gz
-ENV SS_DEPEND pcre
-ENV SS_BUILD_DEPEND autoconf build-base curl libtool linux-headers openssl-dev asciidoc xmlto pcre-dev
+ARG SS_VER=2.6.1
+ARG SS_URL=https://github.com/shadowsocks/shadowsocks-libev/archive/v$SS_VER.tar.gz
+
+ENV SERVER_ADDR 0.0.0.0
+ENV SERVER_PORT 8088
+ENV PASSWORD=
+ENV METHOD      aes-256-cfb
+ENV TIMEOUT     300
+ENV DNS_ADDR    8.8.8.8
+ENV DNS_ADDR_2 8.8.4.4
+
+RUN set -ex && \
+    apk add --no-cache --virtual .build-deps \
+        asciidoc \
+        autoconf \
+        build-base \
+        curl \
+        libtool \
+        linux-headers \
+        openssl-dev \
+        pcre-dev \
+        tar \
+        xmlto && \
+    cd /tmp && \
+    curl -sSL $SS_URL | tar xz --strip 1 && \
+    ./configure --prefix=/usr --disable-documentation && \
+    make install && \
+    cd .. && \
+
+    runDeps="$( \
+        scanelf --needed --nobanner /usr/bin/ss-* \
+            | awk '{ gsub(/,/, "\nso:", $2); print "so:" $2 }' \
+            | xargs -r apk info --installed \
+            | sort -u \
+    )" && \
+    apk add --no-cache --virtual .run-deps $runDeps && \
+    apk del .build-deps && \
+    rm -rf /tmp/*
 
 RUN set -ex \
     && apk add --update ${SS_DEPEND} ${SS_BUILD_DEPEND} \
@@ -17,23 +51,16 @@ RUN set -ex \
     && apk del --purge ${SS_BUILD_DEPEND} \
     && rm -rf /var/cache/apk/*
 
-ENV SERVER_ADDR 0.0.0.0
-ENV SERVER_PORT 8088
-ENV PASSWORD=
-ENV ENCRYPT_METHOD aes-256-cfb
-ENV TIMEOUT 300
-ENV DNS_RESOLVER 8.8.8.8
-ENV DNS_RESOLVER2 8.8.4.4
+USER nobody
 
-EXPOSE ${SERVER_PORT}/tcp
-EXPOSE ${SERVER_PORT}/udp
+EXPOSE $SERVER_PORT/tcp $SERVER_PORT/udp
 
-CMD /usr/local/bin/ss-server \
-    -s ${SERVER_ADDR} \
-    -p ${SERVER_PORT} \
-    -m ${ENCRYPT_METHOD} \
+CMD ss-server -s $SERVER_ADDR \
+    -p $SERVER_PORT \
     -k ${PASSWORD:-$(hostname)} \
-    -t ${TIMEOUT} \
-    -d ${DNS_RESOLVER} \
-    -d ${DNS_RESOLVER2} \
-    --fast-open -u -A
+    -m $METHOD \
+    -t $TIMEOUT \
+    --fast-open \
+    -d $DNS_ADDR \
+    -d $DNS_ADDR_2 \
+    -u -A
