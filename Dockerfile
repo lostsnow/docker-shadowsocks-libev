@@ -40,17 +40,6 @@ RUN set -ex && \
     apk del .build-deps && \
     rm -rf /tmp/*
 
-RUN set -ex \
-    && apk add --update ${SS_DEPEND} ${SS_BUILD_DEPEND} \
-    && curl -sSL ${SS_DOWNLOAD_URL} | tar xz \
-    && cd shadowsocks-libev-${SS_VERSION} \
-        && ./configure \
-        && make install \
-        && cd .. \
-        && rm -rf shadowsocks-libev-${SS_VERSION} \
-    && apk del --purge ${SS_BUILD_DEPEND} \
-    && rm -rf /var/cache/apk/*
-
 USER nobody
 
 EXPOSE $SERVER_PORT/tcp $SERVER_PORT/udp
