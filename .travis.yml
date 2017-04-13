@@ -7,7 +7,7 @@ before_install:
   - docker build -t lostsnow/shadowsocks-libev .
   - docker run -d -p 127.0.0.1:8088:8088 -e PASSWORD=helloworld --name server lostsnow/shadowsocks-libev
   - docker run -d -p 127.0.0.1:1080:1080 --link server:server --name client lostsnow/shadowsocks-libev
-    ss-local -s server -p 8088 -m aes-256-cfb -k helloworld -b 0.0.0.0 -l 1080 -t 300 --fast-open -A
+    ss-local -s server -p 8088 -m aes-256-gcm -k helloworld -b 0.0.0.0 -l 1080 -t 300 --fast-open
   - docker ps -a
 
 script:
@@ -18,6 +18,6 @@ script:
 
 after_success:
   - docker login -e="$DOCKER_EMAIL" -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
-  - docker tag lostsnow/shadowsocks-libev lostsnow/shadowsocks-libev:2.6.1
+  - docker tag lostsnow/shadowsocks-libev lostsnow/shadowsocks-libev:3.0.5
   - docker push lostsnow/shadowsocks-libev
-  - docker push lostsnow/shadowsocks-libev:2.6.1
+  - docker push lostsnow/shadowsocks-libev:3.0.5
