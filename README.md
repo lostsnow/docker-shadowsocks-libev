@@ -23,6 +23,15 @@ docker-compose up -d client
 curl -x socks5h://<client-ip>:1080 https://www.google.com/
 ```
 
+## Changelog
+
+### 3.0.0
+
+* deprecate OTA (One-Time-Auth)
+* add support for [AEAD][4]
+
+
 [1]: https://github.com/shadowsocks/shadowsocks-libev/releases
 [2]: https://hub.docker.com/r/lostsnow/shadowsocks-libev/
 [3]: https://github.com/lostsnow/docker-shadowsocks-libev/blob/master/docker-compose.yml
+[4]: https://shadowsocks.org/en/spec/AEAD-Ciphers.html
