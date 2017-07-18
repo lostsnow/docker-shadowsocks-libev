@@ -2,7 +2,7 @@
 
 [![](https://travis-ci.org/lostsnow/docker-shadowsocks-libev.svg)](https://travis-ci.org/lostsnow/docker-shadowsocks-libev)
 
-Current version: [3.0.6][1]
+Current version: [3.0.7][1]
 
 ## docker image
 
@@ -25,6 +25,11 @@ curl -x socks5h://<client-ip>:1080 https://www.google.com/
 
 ## Changelog
 
+### 3.0.7
+
+* add support for [simple-obfs][5] plugin
+* add ARGS env variable
+
 ### 3.0.0
 
 * deprecate OTA (One-Time-Auth)
@@ -35,3 +40,4 @@ curl -x socks5h://<client-ip>:1080 https://www.google.com/
 [2]: https://hub.docker.com/r/lostsnow/shadowsocks-libev/
 [3]: https://github.com/lostsnow/docker-shadowsocks-libev/blob/master/docker-compose.yml
 [4]: https://shadowsocks.org/en/spec/AEAD-Ciphers.html
+[5]: https://github.com/shadowsocks/simple-obfs

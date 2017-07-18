@@ -1,7 +1,7 @@
 FROM alpine
 MAINTAINER lostsnow <lostsnow@gmail.com>
 
-ARG SS_VER=3.0.6
+ARG SS_VER=3.0.7
 ARG SS_URL=https://github.com/shadowsocks/shadowsocks-libev/releases/download/v$SS_VER/shadowsocks-libev-$SS_VER.tar.gz
 
 ENV SERVER_ADDR 0.0.0.0
@@ -11,6 +11,7 @@ ENV METHOD      aes-256-gcm
 ENV TIMEOUT     300
 ENV DNS_ADDR    8.8.8.8
 ENV DNS_ADDR_2  8.8.4.4
+ENV ARGS=
 
 RUN set -ex && \
     apk add --no-cache --virtual .build-deps \
@@ -20,12 +21,15 @@ RUN set -ex && \
         libev-dev \
         libtool \
         linux-headers \
-        udns-dev \
         libsodium-dev \
         mbedtls-dev \
         pcre-dev \
         tar \
-        xmlto && \
+        xmlto \
+        udns-dev \
+
+        automake \
+        git && \
     cd /tmp && \
     curl -sSL $SS_URL | tar xz --strip 1 && \
     ./configure --prefix=/usr --disable-documentation && \
@@ -39,6 +43,25 @@ RUN set -ex && \
             | sort -u \
     )" && \
     apk add --no-cache --virtual .run-deps $runDeps && \
+    rm -rf /tmp/* && \
+
+    cd /tmp/ && \
+    git clone https://github.com/shadowsocks/simple-obfs.git && \
+    cd simple-obfs && \
+    git submodule update --init --recursive && \
+    ./autogen.sh && \
+    ./configure --disable-documentation && \
+    make install && \
+    cd .. && \
+
+    simpleObfsRunDeps="$( \
+        scanelf --needed --nobanner /usr/local/bin/obfs-server \
+            | awk '{ gsub(/,/, "\nso:", $2); print "so:" $2 }' \
+            | xargs -r apk info --installed \
+            | sort -u \
+    )" && \
+    apk add --no-cache --virtual .simple-obfs-run-deps $simpleObfsRunDeps && \
+
     apk del .build-deps && \
     rm -rf /tmp/*
 
@@ -54,4 +77,5 @@ CMD ss-server -s $SERVER_ADDR \
     --fast-open \
     -d $DNS_ADDR \
     -d $DNS_ADDR_2 \
-    -u
+    -u \
+    $ARGS
