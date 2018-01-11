@@ -17,7 +17,7 @@ script:
   - curl -I -x socks5h://127.0.0.1:1080 https://www.facebook.com/
 
 after_success:
-  - docker login -e="$DOCKER_EMAIL" -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
+  - docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
   - docker tag lostsnow/shadowsocks-libev lostsnow/shadowsocks-libev:3.1.2
   - docker push lostsnow/shadowsocks-libev
   - docker push lostsnow/shadowsocks-libev:3.1.2
