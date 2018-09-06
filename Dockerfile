@@ -1,7 +1,7 @@
 FROM alpine
-MAINTAINER lostsnow <lostsnow@gmail.com>
+LABEL maintainer="lostsnow <lostsnow@gmail.com>"
 
-ARG SS_VER=3.1.2
+ARG SS_VER=3.2.0
 ARG SS_URL=https://github.com/shadowsocks/shadowsocks-libev/releases/download/v$SS_VER/shadowsocks-libev-$SS_VER.tar.gz
 
 ENV SERVER_ADDR 0.0.0.0
@@ -9,41 +9,37 @@ ENV SERVER_PORT 8088
 ENV PASSWORD=
 ENV METHOD      aes-256-gcm
 ENV TIMEOUT     300
-ENV DNS_ADDR    8.8.8.8
-ENV DNS_ADDR_2  8.8.4.4
+ENV DNS_ADDRS   8.8.8.8,8.8.4.4
 ENV ARGS=
 
 RUN set -ex && \
     apk add --no-cache --virtual .build-deps \
         autoconf \
+        automake \
         build-base \
+        c-ares-dev \
         curl \
         libev-dev \
-        linux-headers \
+        libtool \
         libsodium-dev \
+        linux-headers \
         mbedtls-dev \
         pcre-dev \
         tar \
-        c-ares-dev \
-
-        automake \
-        libtool \
         git && \
+    # Build & install
     cd /tmp && \
     curl -sSL $SS_URL | tar xz --strip 1 && \
     ./configure --prefix=/usr --disable-documentation && \
     make install && \
     cd .. && \
-
-    runDeps="$( \
-        scanelf --needed --nobanner /usr/bin/ss-* \
-            | awk '{ gsub(/,/, "\nso:", $2); print "so:" $2 }' \
-            | xargs -r apk info --installed \
-            | sort -u \
-    )" && \
-    apk add --no-cache --virtual .run-deps $runDeps && \
+    # Runtime dependencies setup
+    apk add --no-cache \
+        rng-tools \
+        $(scanelf --needed --nobanner /usr/bin/ss-* \
+        | awk '{ gsub(/,/, "\nso:", $2); print "so:" $2 }' \
+        | sort -u) && \
     rm -rf /tmp/* && \
-
     cd /tmp/ && \
     git clone https://github.com/shadowsocks/simple-obfs.git && \
     cd simple-obfs && \
@@ -53,15 +49,12 @@ RUN set -ex && \
     make && \
     make install && \
     cd .. && \
-
-    simpleObfsRunDeps="$( \
-        scanelf --needed --nobanner /usr/bin/obfs-server \
-            | awk '{ gsub(/,/, "\nso:", $2); print "so:" $2 }' \
-            | xargs -r apk info --installed \
-            | sort -u \
-    )" && \
-    apk add --no-cache --virtual .simple-obfs-run-deps $simpleObfsRunDeps && \
-
+    # Runtime dependencies setup
+    apk add --no-cache \
+        rng-tools \
+        $(scanelf --needed --nobanner /usr/bin/obfs-server \
+        | awk '{ gsub(/,/, "\nso:", $2); print "so:" $2 }' \
+        | sort -u) && \
     apk del .build-deps && \
     rm -rf /tmp/*
 
@@ -75,7 +68,6 @@ CMD ss-server -s $SERVER_ADDR \
     -m $METHOD \
     -t $TIMEOUT \
     --fast-open \
-    -d $DNS_ADDR \
-    -d $DNS_ADDR_2 \
+    -d $DNS_ADDRS \
     -u \
     $ARGS
