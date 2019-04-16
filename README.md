@@ -20,7 +20,7 @@ docker-compose up -d server
 docker-compose up -d client
 
 # usage
-curl -x socks5h://<client-ip>:1080 https://www.google.com/
+curl -x socks5://<client-ip>:1080 https://www.google.com/
 ```
 
 ## Changelog

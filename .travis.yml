@@ -11,10 +11,10 @@ before_install:
   - docker ps -a
 
 script:
-  - curl -I -x socks5h://127.0.0.1:1080 https://www.google.com/
-  - curl -I -x socks5h://127.0.0.1:1080 https://www.youtube.com/
-  - curl -I -x socks5h://127.0.0.1:1080 https://twitter.com/
-  - curl -I -x socks5h://127.0.0.1:1080 https://www.facebook.com/
+  - curl -I -x socks5://127.0.0.1:1080 https://www.google.com/
+  - curl -I -x socks5://127.0.0.1:1080 https://www.youtube.com/
+  - curl -I -x socks5://127.0.0.1:1080 https://twitter.com/
+  - curl -I -x socks5://127.0.0.1:1080 https://www.facebook.com/
 
 after_success:
   - docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
