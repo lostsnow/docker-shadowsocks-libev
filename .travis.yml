@@ -23,6 +23,6 @@ script:
 
 after_success:
   - docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
-  - docker tag lostsnow/shadowsocks-libev lostsnow/shadowsocks-libev:3.2.5
+  - docker tag lostsnow/shadowsocks-libev lostsnow/shadowsocks-libev:3.3.1
   - docker push lostsnow/shadowsocks-libev
-  - docker push lostsnow/shadowsocks-libev:3.2.5
+  - docker push lostsnow/shadowsocks-libev:3.3.1
